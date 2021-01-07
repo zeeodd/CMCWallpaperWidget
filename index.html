@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stamping Tool</title>
+  <link rel='stylesheet' type='text/css' href='css/style.css'>
+  <script src="js/fabric.min.js"></script>
+</head>
+<body>
+
+  <div>
+    <h1>Original Image</h1>
+    <img id="img" src="img/checkerboard.png">
+  </div>
+  <div>
+    <h1>Input</h1>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <button id="addRectBtn">Add Rectangle</button>
+    <button id="deleteBtn">Delete</button>
+  </div>
+  <div>
+    <h1>Output</h1>
+    <canvas id="clipcanvas" width="400" height="400"></canvas>
+  </div>
+
+  <script type="text/javascript">
+    var canvas = document.getElementById('canvas');
+    var clipcanvas = document.getElementById('clipcanvas');
+    var ctx = canvas.getContext('2d');
+    var img = document.getElementById('img');
+
+    var addRectBtn = document.getElementById('addRectBtn');
+    var deleteBtn = document.getElementById('deleteBtn');
+
+    img.onload = function() {
+      var canvasfabric = new fabric.Canvas('canvas', { });
+
+      var clipcanvasfabric = new fabric.Canvas('clipcanvas', { });
+
+      var imgInstance = new fabric.Image(img, {
+        top: 0,
+        left: 0,
+        selectable: false
+      });
+
+      canvasfabric.add(imgInstance);
+      canvasfabric.centerObject(imgInstance);
+      canvasfabric.renderAll();
+
+      /*
+      canvasfabric.freeDrawingBrush.color = "purple";
+      canvasfabric.freeDrawingBrush.width = 5;
+
+      canvasfabric.on('path:created', function(options) {
+          var path = options.path;
+          canvasfabric.isDrawingMode = false;
+          canvasfabric.remove(imgInstance);
+          canvasfabric.remove(path);
+          canvasfabric.clipTo = function(ctx) {
+              path.render(ctx);
+          };
+          canvasfabric.add(imgInstance);
+      });
+      */
+
+      addRectBtn.onclick = function() {
+        var red = new fabric.Rect({ top: 175, left: 175, width: 50, height: 50, fill: 'green', opacity: 0.5 });
+        canvasfabric.discardActiveObject().renderAll();
+        canvasfabric.add(red);
+        canvasfabric.bringToFront(red);
+        canvasfabric.setActiveObject(red);
+        canvasfabric.renderAll();
+
+        var clipPath = new fabric.Rect({ top: 175, left: 175, width: 50, height: 50 });
+        clipcanvasfabric.add(imgInstance);
+        clipcanvasfabric.centerObject(imgInstance);
+        clipcanvasfabric.renderAll();
+        clipcanvasfabric.clipPath = clipPath;
+        clipcanvasfabric.renderAll();
+      }
+
+      deleteBtn.onclick = function() {
+        var selection = canvasfabric.getActiveObject();
+        if (selection.type === 'activeSelection') {
+            selection.forEachObject(function(element) {
+                console.log(element);
+                canvasfabric.remove(element);
+            });
+        }
+        else{
+            canvasfabric.remove(selection);
+        }
+        canvasfabric.discardActiveObject();
+        canvasfabric.requestRenderAll();
+      }
+    }
+
+  </script>
+</body>
+</html>
