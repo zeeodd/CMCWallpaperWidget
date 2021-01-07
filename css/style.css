@@ -34,6 +34,7 @@ canvas {
   color: white;
   padding: 10px;
   width: 100px;
+  height: 40px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -56,6 +57,20 @@ canvas {
 
 #addCircleBtn {
   background-color: #008CBA;
+  font-family: monospace;
+  border: none;
+  color: white;
+  padding: 10px;
+  width: 100px;
+  height: 40px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+}
+
+#addPolygonBtn {
+  background-color: #f44336;
   font-family: monospace;
   border: none;
   color: white;

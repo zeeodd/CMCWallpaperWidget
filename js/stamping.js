@@ -5,9 +5,11 @@ var img = document.getElementById('img');
 var clipPath;
 var square;
 var circle;
+var polygon;
 
 var addRectBtn = document.getElementById('addRectBtn');
 var addCircleBtn = document.getElementById('addCircleBtn');
+var addPolygonBtn = document.getElementById('addPolygonBtn');
 var deleteBtn = document.getElementById('deleteBtn');
 var canvasfabric = new fabric.Canvas('canvas', { });
 var clipcanvasfabric = new fabric.Canvas('clipcanvas', { });
@@ -26,7 +28,7 @@ img.onload = function() {
 
   // Add Rectangle
   addRectBtn.onclick = function() {
-    square = new fabric.Rect({ top: 175, left: 175, width: 50, height: 50, fill: 'green', opacity: 0.4 });
+    square = new fabric.Rect({ top: 175, left: 175, width: 50, height: 50, fill: 'green', opacity: 0.5 });
     square.name = "square";
     canvasfabric.discardActiveObject().renderAll();
     canvasfabric.add(square);
@@ -44,7 +46,7 @@ img.onload = function() {
 
   // Add Circle
   addCircleBtn.onclick = function() {
-    circle = new fabric.Circle({ top: 160, left: 160, radius: 40, fill: 'blue', lockRotation: true, opacity: 0.4 });
+    circle = new fabric.Circle({ top: 160, left: 160, radius: 40, fill: 'blue', lockRotation: true, opacity: 0.5 });
     circle.name = "circle";
     circle.setControlsVisibility({
         mt: false,
@@ -66,6 +68,46 @@ img.onload = function() {
     clipcanvasfabric.renderAll();
   }
 
+  // Add Polygon
+  addPolygonBtn.onclick = function() {
+    var points =
+    [ { x: 0, y: 0 },
+      { x: 40, y: 20 },
+      { x: 40, y: 60 },
+      { x: -40, y: 60 },
+      { x: -40, y: 20 },
+    ];
+    polygon = new fabric.Polygon(points, {
+  		left: 160,
+  		top: 170,
+  		fill: 'red',
+      opacity: 0.5,
+  		scaleX: 1,
+  		scaleY: 1,
+      objectCaching: false,
+      cornerColor: 'red',
+      transparentCorners: false
+  	});
+    polygon.name = "polygon";
+  	canvasfabric.add(polygon);
+    canvasfabric.bringToFront(polygon);
+    canvasfabric.renderAll();
+
+    clipPath = new fabric.Polygon(points, {
+  		left: 160,
+  		top: 170,
+  		scaleX: 1,
+  		scaleY: 1,
+      objectCaching: false
+  	});
+    clipcanvasfabric.add(imgInstance);
+    clipcanvasfabric.centerObject(imgInstance);
+    clipcanvasfabric.clipPath = clipPath;
+    clipcanvasfabric.renderAll();
+
+    Edit();
+  }
+
   // Delete
   deleteBtn.onclick = function() {
     var selection = canvasfabric.getActiveObject();
@@ -84,6 +126,9 @@ img.onload = function() {
     else if (selection.name == "circle") {
       circle = undefined;
     }
+    else if (selection.name == "polygon") {
+      polygon = undefined;
+    }
 
     canvasfabric.discardActiveObject();
     clipcanvasfabric.clear();
@@ -91,15 +136,86 @@ img.onload = function() {
   }
 }
 
+function polygonPositionHandler(dim, finalMatrix, polygon) {
+  var x = (polygon.points[this.pointIndex].x - polygon.pathOffset.x),
+	    y = (polygon.points[this.pointIndex].y - polygon.pathOffset.y);
+	return fabric.util.transformPoint(
+		{ x: x, y: y },
+    fabric.util.multiplyTransformMatrices(
+      polygon.canvas.viewportTransform,
+      polygon.calcTransformMatrix()
+    )
+	);
+}
+
+function actionHandler(eventData, transform, x, y) {
+	var p = transform.target,
+    currentControl = p.controls[p.__corner],
+    mouseLocalPosition = p.toLocalPoint(new fabric.Point(x, y), 'center', 'center'),
+    polygonBaseSize = p._getNonTransformedDimensions(),
+		size = p._getTransformedDimensions(0, 0),
+		finalPointPosition = {
+			x: mouseLocalPosition.x * polygonBaseSize.x / size.x + p.pathOffset.x,
+			y: mouseLocalPosition.y * polygonBaseSize.y / size.y + p.pathOffset.y
+		};
+	p.points[currentControl.pointIndex] = finalPointPosition;
+	return true;
+}
+
+function anchorWrapper(anchorIndex, fn) {
+  return function(eventData, transform, x, y) {
+    var fabricObject = transform.target,
+      absolutePoint = fabric.util.transformPoint({
+          x: (fabricObject.points[anchorIndex].x - fabricObject.pathOffset.x),
+          y: (fabricObject.points[anchorIndex].y - fabricObject.pathOffset.y),
+      }, fabricObject.calcTransformMatrix()),
+      actionPerformed = fn(eventData, transform, x, y),
+      newDim = fabricObject._setPositionDimensions({}),
+      polygonBaseSize = fabricObject._getNonTransformedDimensions(),
+      newX = (fabricObject.points[anchorIndex].x - fabricObject.pathOffset.x) / polygonBaseSize.x,
+	    newY = (fabricObject.points[anchorIndex].y - fabricObject.pathOffset.y) / polygonBaseSize.y;
+    fabricObject.setPositionByOrigin(absolutePoint, newX + 0.5, newY + 0.5);
+    return actionPerformed;
+  }
+}
+
+function Edit() {
+		canvasfabric.setActiveObject(polygon);
+		polygon.edit = !polygon.edit;
+		if (polygon.edit) {
+      var lastControl = polygon.points.length - 1;
+      polygon.cornerStyle = 'circle';
+      polygon.cornerColor = 'rgba(255, 0, 255, 0.5)';
+	    polygon.controls = polygon.points.reduce(function(acc, point, index) {
+				acc['p' + index] = new fabric.Control({
+					positionHandler: polygonPositionHandler,
+					actionHandler: anchorWrapper(index > 0 ? index - 1 : lastControl, actionHandler),
+					actionName: 'modifyPolygon',
+					pointIndex: index
+				});
+
+				return acc;
+			}, { });
+		} else {
+      polygon.cornerColor = 'red';
+      polygon.cornerStyle = 'rect';
+			polygon.controls = fabric.Object.prototype.controls;
+		}
+		polygon.hasBorders = !polygon.edit;
+		canvasfabric.requestRenderAll();
+	}
+
 function update(progress) {
-  if (square != undefined || circle != undefined) {
+  if (square != undefined || circle != undefined || polygon != undefined) {
     addCircleBtn.disabled = true;
     addRectBtn.disabled = true;
+    addPolygonBtn.disabled = true;
     deleteBtn.disabled = false;
   }
   else {
     addCircleBtn.disabled = false;
     addRectBtn.disabled = false;
+    addPolygonBtn.disabled = false;
     deleteBtn.disabled = true;
   }
 
@@ -120,6 +236,19 @@ function update(progress) {
 
     clipPath.setCoords();
     circle.setCoords();
+  }
+  else if (clipPath != undefined && polygon != undefined) {
+    clipPath = new fabric.Polygon(polygon.points, {
+  		left: polygon.left,
+  		top: polygon.top,
+  		scaleX: 1,
+  		scaleY: 1,
+      objectCaching: false
+  	});
+    clipcanvasfabric.clipPath = clipPath;
+
+    clipPath.setCoords();
+    polygon.setCoords();
   }
 
   clipcanvasfabric.renderAll();
