@@ -10,6 +10,8 @@ var polygon;
 var addRectBtn = document.getElementById('addRectBtn');
 var addCircleBtn = document.getElementById('addCircleBtn');
 var addPolygonBtn = document.getElementById('addPolygonBtn');
+var addPointBtn = document.getElementById('addPointBtn');
+var removePointBtn = document.getElementById('removePointBtn');
 var deleteBtn = document.getElementById('deleteBtn');
 var canvasfabric = new fabric.Canvas('canvas', { });
 var clipcanvasfabric = new fabric.Canvas('clipcanvas', { });
@@ -105,6 +107,24 @@ img.onload = function() {
     clipcanvasfabric.clipPath = clipPath;
     clipcanvasfabric.renderAll();
 
+    Edit();
+  }
+
+  addPointBtn.onclick = function() {
+    // var cachedPoints = polygon.points;
+    var firstPoint = polygon.points[0];
+    var lastPoint = polygon.points[polygon.points.length-1];
+    var newPoint = { x: 0, y: 0 };
+    newPoint.x = (lastPoint.x + firstPoint.x) / 2;
+    newPoint.y = (lastPoint.y + firstPoint.y) / 2;
+    polygon.points.push(newPoint);
+    Edit();
+    Edit();
+  }
+
+  removePointBtn.onclick = function() {
+    polygon.points.pop();
+    Edit();
     Edit();
   }
 
@@ -206,6 +226,16 @@ function Edit() {
 	}
 
 function update(progress) {
+  if (polygon != undefined) {
+    removePointBtn.style.display = "block";
+    addPointBtn.style.display = "block";
+    if (polygon.points.length <= 3) {
+      removePointBtn.disabled = true;
+    }
+    else {
+      removePointBtn.disabled = false;
+    }
+  }
   if (square != undefined || circle != undefined || polygon != undefined) {
     addCircleBtn.disabled = true;
     addRectBtn.disabled = true;
@@ -217,6 +247,8 @@ function update(progress) {
     addRectBtn.disabled = false;
     addPolygonBtn.disabled = false;
     deleteBtn.disabled = true;
+    removePointBtn.style.display = "none";
+    addPointBtn.style.display = "none";
   }
 
   if (clipPath != undefined && square != undefined) {
