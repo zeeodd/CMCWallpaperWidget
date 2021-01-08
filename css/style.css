@@ -27,7 +27,7 @@ canvas {
   align-items: baseline;
 }
 
-#deleteBtn {
+#deleteBtn, #cropBtn {
   background-color: #555555;
   font-family: monospace;
   border: none;

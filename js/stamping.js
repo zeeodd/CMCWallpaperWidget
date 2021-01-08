@@ -6,6 +6,10 @@ var clipPath;
 var square;
 var circle;
 var polygon;
+var ogImg;
+var clipImg;
+
+var hasCropped = false;
 
 var addRectBtn = document.getElementById('addRectBtn');
 var addCircleBtn = document.getElementById('addCircleBtn');
@@ -13,19 +17,26 @@ var addPolygonBtn = document.getElementById('addPolygonBtn');
 var addPointBtn = document.getElementById('addPointBtn');
 var removePointBtn = document.getElementById('removePointBtn');
 var deleteBtn = document.getElementById('deleteBtn');
+var cropBtn = document.getElementById('cropBtn');
 var canvasfabric = new fabric.Canvas('canvas', { });
 var clipcanvasfabric = new fabric.Canvas('clipcanvas', { });
 
 img.onload = function() {
 
-  var imgInstance = new fabric.Image(img, {
+  ogImg = new fabric.Image(img, {
     top: 0,
     left: 0,
     selectable: false
   });
 
-  canvasfabric.add(imgInstance);
-  canvasfabric.centerObject(imgInstance);
+  clipImg = new fabric.Image(img, {
+    top: 0,
+    left: 0,
+    selectable: false
+  });
+
+  canvasfabric.add(ogImg);
+  canvasfabric.centerObject(ogImg);
   canvasfabric.renderAll();
 
   // Add Rectangle
@@ -39,8 +50,8 @@ img.onload = function() {
     canvasfabric.renderAll();
 
     clipPath = new fabric.Rect({ top: 175, left: 175, width: 50, height: 50 });
-    clipcanvasfabric.add(imgInstance);
-    clipcanvasfabric.centerObject(imgInstance);
+    clipcanvasfabric.add(clipImg);
+    clipcanvasfabric.centerObject(clipImg);
     clipcanvasfabric.renderAll();
     clipcanvasfabric.clipPath = clipPath;
     clipcanvasfabric.renderAll();
@@ -63,8 +74,8 @@ img.onload = function() {
     canvasfabric.renderAll();
 
     clipPath = new fabric.Circle({ top: 160, left: 160, radius: 40 });
-    clipcanvasfabric.add(imgInstance);
-    clipcanvasfabric.centerObject(imgInstance);
+    clipcanvasfabric.add(clipImg);
+    clipcanvasfabric.centerObject(clipImg);
     clipcanvasfabric.renderAll();
     clipcanvasfabric.clipPath = clipPath;
     clipcanvasfabric.renderAll();
@@ -102,14 +113,44 @@ img.onload = function() {
   		scaleY: 1,
       objectCaching: false
   	});
-    clipcanvasfabric.add(imgInstance);
-    clipcanvasfabric.centerObject(imgInstance);
+    clipcanvasfabric.add(clipImg);
+    clipcanvasfabric.centerObject(clipImg);
     clipcanvasfabric.clipPath = clipPath;
     clipcanvasfabric.renderAll();
 
     Edit();
   }
 
+  // Crop
+  cropBtn.onclick = function() {
+
+    disableInputCanvas();
+    hasCropped = true;
+
+    clipImg.selectable = true;
+    disabled = true;
+    clipPath.visible = false;
+    var cropped = new Image();
+    cropped.src = clipcanvasfabric.toDataURL({
+      left: clipPath.left,
+      top: clipPath.top,
+      width: clipPath.width,
+      height: clipPath.height
+    });
+    cropped.onload = function() {
+      clipcanvasfabric.clear();
+      clipImg = new fabric.Image(cropped);
+      clipImg.left = clipPath.left;
+      clipImg.top = clipPath.top;
+      clipImg.setCoords();
+      clipcanvasfabric.add(clipImg);
+      clipcanvasfabric.clipPath = null;
+      clipcanvasfabric.renderAll();
+    }
+    console.log("CROPPED!");
+  };
+
+  // Add Polygon point
   addPointBtn.onclick = function() {
     // var cachedPoints = polygon.points;
     var firstPoint = polygon.points[0];
@@ -122,6 +163,7 @@ img.onload = function() {
     Edit();
   }
 
+  // Remove Polygon point
   removePointBtn.onclick = function() {
     polygon.points.pop();
     Edit();
@@ -153,6 +195,27 @@ img.onload = function() {
     canvasfabric.discardActiveObject();
     clipcanvasfabric.clear();
     canvasfabric.requestRenderAll();
+  }
+}
+
+function disableInputCanvas() {
+  var shadow = new fabric.Shadow({
+            color: 'rgba(0, 0, 0, 0.2)',
+            blur: 0,
+            offsetX: 8,
+            offsetY: 8
+        });
+  ogImg.shadow = shadow;
+  canvasfabric.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+  canvasfabric.discardActiveObject();
+  if (square != undefined) {
+    square.selectable = false;
+  }
+  else if (circle != undefined) {
+    circle.selectable = false;
+  }
+  else if (polygon != undefined) {
+    polygon.selectable = false;
   }
 }
 
@@ -226,29 +289,42 @@ function Edit() {
 	}
 
 function update(progress) {
-  if (polygon != undefined) {
-    removePointBtn.style.display = "block";
-    addPointBtn.style.display = "block";
-    if (polygon.points.length <= 3) {
-      removePointBtn.disabled = true;
+  if (!hasCropped) {
+    if (polygon != undefined) {
+      removePointBtn.style.display = "block";
+      addPointBtn.style.display = "block";
+      if (polygon.points.length <= 3) {
+        removePointBtn.disabled = true;
+      }
+      else {
+        removePointBtn.disabled = false;
+      }
+    }
+
+    if (square != undefined || circle != undefined || polygon != undefined) {
+      addCircleBtn.disabled = true;
+      addRectBtn.disabled = true;
+      addPolygonBtn.disabled = true;
+      deleteBtn.disabled = false;
     }
     else {
-      removePointBtn.disabled = false;
+      addCircleBtn.disabled = false;
+      addRectBtn.disabled = false;
+      addPolygonBtn.disabled = false;
+      deleteBtn.disabled = true;
+      removePointBtn.style.display = "none";
+      addPointBtn.style.display = "none";
     }
   }
-  if (square != undefined || circle != undefined || polygon != undefined) {
+  else
+  {
     addCircleBtn.disabled = true;
     addRectBtn.disabled = true;
     addPolygonBtn.disabled = true;
-    deleteBtn.disabled = false;
-  }
-  else {
-    addCircleBtn.disabled = false;
-    addRectBtn.disabled = false;
-    addPolygonBtn.disabled = false;
     deleteBtn.disabled = true;
-    removePointBtn.style.display = "none";
-    addPointBtn.style.display = "none";
+    cropBtn.disabled = true;
+    if (removePointBtn.style.display != "none") removePointBtn.disabled = true;
+    if (addPointBtn.style.display != "none") addPointBtn.disabled = true;
   }
 
   if (clipPath != undefined && square != undefined) {
