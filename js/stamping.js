@@ -8,6 +8,7 @@ var circle;
 var polygon;
 var ogImg;
 var clipImg;
+var _clipboard;
 
 var hasCropped = false;
 
@@ -18,6 +19,7 @@ var addPointBtn = document.getElementById('addPointBtn');
 var removePointBtn = document.getElementById('removePointBtn');
 var deleteBtn = document.getElementById('deleteBtn');
 var cropBtn = document.getElementById('cropBtn');
+var dupeBtn = document.getElementById('dupeBtn');
 var canvasfabric = new fabric.Canvas('canvas', { });
 var clipcanvasfabric = new fabric.Canvas('clipcanvas', { });
 
@@ -32,6 +34,8 @@ img.onload = function() {
   clipImg = new fabric.Image(img, {
     top: 0,
     left: 0,
+    centerX: 'center',
+    centerY: 'center',
     selectable: false
   });
 
@@ -41,8 +45,11 @@ img.onload = function() {
 
   // Add Rectangle
   addRectBtn.onclick = function() {
-    square = new fabric.Rect({ top: 175, left: 175, width: 50, height: 50, fill: 'green', opacity: 0.5 });
+    square = new fabric.Rect({ top: 175, left: 175, width: 50, height: 50, fill: 'green', lockRotation: true,  opacity: 0.5 });
     square.name = "square";
+    square.setControlsVisibility({
+        mtr: false
+    });
     canvasfabric.discardActiveObject().renderAll();
     canvasfabric.add(square);
     canvasfabric.bringToFront(square);
@@ -65,7 +72,8 @@ img.onload = function() {
         mt: false,
         mb: false,
         ml: false,
-        mr: false
+        mr: false,
+        mtr: false
     });
     canvasfabric.discardActiveObject().renderAll();
     canvasfabric.add(circle);
@@ -109,8 +117,6 @@ img.onload = function() {
     clipPath = new fabric.Polygon(points, {
   		left: 160,
   		top: 170,
-  		scaleX: 1,
-  		scaleY: 1,
       objectCaching: false
   	});
     clipcanvasfabric.add(clipImg);
@@ -131,24 +137,78 @@ img.onload = function() {
     disabled = true;
     clipPath.visible = false;
     var cropped = new Image();
-    cropped.src = clipcanvasfabric.toDataURL({
-      left: clipPath.left,
-      top: clipPath.top,
-      width: clipPath.width,
-      height: clipPath.height
-    });
-    cropped.onload = function() {
-      clipcanvasfabric.clear();
-      clipImg = new fabric.Image(cropped);
-      clipImg.left = clipPath.left;
-      clipImg.top = clipPath.top;
-      clipImg.setCoords();
-      clipcanvasfabric.add(clipImg);
-      clipcanvasfabric.clipPath = null;
-      clipcanvasfabric.renderAll();
+
+    if (square != undefined) {
+      cropped.src = clipcanvasfabric.toDataURL({
+        left: clipPath.left,
+        top: clipPath.top,
+        width: clipPath.width,
+        height: clipPath.height,
+      });
+      cropped.onload = function() {
+        clipcanvasfabric.clear();
+        clipImg = new fabric.Image(cropped);
+        clipImg.left = clipPath.left;
+        clipImg.top = clipPath.top;
+        clipImg.setCoords();
+        clipcanvasfabric.add(clipImg);
+        clipcanvasfabric.clipPath = null;
+        clipcanvasfabric.setActiveObject(clipImg);
+        clipcanvasfabric.centerObject(clipImg);
+        clipcanvasfabric.renderAll();
+      }
+    }
+    else if (circle != undefined) {
+      cropped.src = clipcanvasfabric.toDataURL({
+        left: clipPath.left,
+        top: clipPath.top,
+        width: clipPath.radius * 2,
+        height: clipPath.radius * 2,
+      });
+      cropped.onload = function() {
+        clipcanvasfabric.clear();
+        clipImg = new fabric.Image(cropped);
+        clipImg.left = clipPath.left;
+        clipImg.top = clipPath.top;
+        clipImg.setCoords();
+        clipcanvasfabric.add(clipImg);
+        clipcanvasfabric.clipPath = null;
+        clipcanvasfabric.setActiveObject(clipImg);
+        clipcanvasfabric.centerObject(clipImg);
+        clipcanvasfabric.renderAll();
+      }
+    }
+    else if (polygon != undefined) {
+      cropped.src = clipcanvasfabric.toDataURL({
+        left: clipPath.left,
+        top: clipPath.top,
+        width: clipPath.width,
+        height: clipPath.height,
+      });
+      cropped.onload = function() {
+        clipcanvasfabric.clear();
+        clipImg = new fabric.Image(cropped);
+        clipImg.left = clipPath.left;
+        clipImg.top = clipPath.top;
+        clipImg.setCoords();
+        clipcanvasfabric.add(clipImg);
+        clipcanvasfabric.clipPath = null;
+        clipcanvasfabric.setActiveObject(clipImg);
+        //clipcanvasfabric.centerObject(clipImg);
+        clipcanvasfabric.renderAll();
+      }
     }
     console.log("CROPPED!");
   };
+
+  // Duplicate Button
+  dupeBtn.onclick = function() {
+    var object = fabric.util.object.clone(clipcanvasfabric.getActiveObject());
+    object.set("top", object.top + object.height);
+    object.set("left", object.left + object.width);
+    clipcanvasfabric.setActiveObject(object);
+    clipcanvasfabric.add(object);
+  }
 
   // Add Polygon point
   addPointBtn.onclick = function() {
@@ -290,6 +350,7 @@ function Edit() {
 
 function update(progress) {
   if (!hasCropped) {
+    dupeBtn.style.display = "none";
     if (polygon != undefined) {
       removePointBtn.style.display = "block";
       addPointBtn.style.display = "block";
@@ -323,8 +384,15 @@ function update(progress) {
     addPolygonBtn.disabled = true;
     deleteBtn.disabled = true;
     cropBtn.disabled = true;
+    cropBtn.style.display = "none";
+    dupeBtn.style.display = "block";
     if (removePointBtn.style.display != "none") removePointBtn.disabled = true;
     if (addPointBtn.style.display != "none") addPointBtn.disabled = true;
+    if (clipcanvasfabric.getActiveObject() != null ||
+        clipcanvasfabric.getActiveObject() != undefined) {
+          dupeBtn.disabled = false;
+        }
+    else { dupeBtn.disabled = true; }
   }
 
   if (clipPath != undefined && square != undefined) {
@@ -333,6 +401,7 @@ function update(progress) {
     clipPath.set('width', square.width * square.scaleX);
     clipPath.set('height', square.height * square.scaleY);
     clipPath.set('angle', square.angle);
+
 
     clipPath.setCoords();
     square.setCoords();

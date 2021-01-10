@@ -27,6 +27,20 @@ canvas {
   align-items: baseline;
 }
 
+#dupeBtn {
+  background-color: #8510d8;
+  font-family: monospace;
+  border: none;
+  color: white;
+  padding: 10px;
+  width: 100px;
+  height: 40px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+}
+
 #deleteBtn, #cropBtn {
   background-color: #555555;
   font-family: monospace;
