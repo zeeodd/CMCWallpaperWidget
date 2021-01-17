@@ -18,6 +18,7 @@ var addPolygonBtn = document.getElementById('addPolygonBtn');
 var addPointBtn = document.getElementById('addPointBtn');
 var removePointBtn = document.getElementById('removePointBtn');
 var deleteBtn = document.getElementById('deleteBtn');
+var deleteBtn2 = document.getElementById('deleteBtn2');
 var cropBtn = document.getElementById('cropBtn');
 var dupeBtn = document.getElementById('dupeBtn');
 var canvasfabric = new fabric.Canvas('canvas', { });
@@ -256,6 +257,22 @@ img.onload = function() {
     clipcanvasfabric.clear();
     canvasfabric.requestRenderAll();
   }
+
+  // Delete 2
+  deleteBtn2.onclick = function() {
+    var selection = clipcanvasfabric.getActiveObject();
+    if (selection.type === 'activeSelection') {
+        selection.forEachObject(function(element) {
+            clipcanvasfabric.remove(element);
+        });
+    }
+    else{
+        clipcanvasfabric.remove(selection);
+    }
+
+    clipcanvasfabric.discardActiveObject();
+    clipcanvasfabric.requestRenderAll();
+  }
 }
 
 function disableInputCanvas() {
@@ -348,9 +365,11 @@ function Edit() {
 		canvasfabric.requestRenderAll();
 	}
 
+// === UPDATE LOOP ===
 function update(progress) {
   if (!hasCropped) {
     dupeBtn.style.display = "none";
+    deleteBtn2.style.display = "none";
     if (polygon != undefined) {
       removePointBtn.style.display = "block";
       addPointBtn.style.display = "block";
@@ -386,13 +405,19 @@ function update(progress) {
     cropBtn.disabled = true;
     cropBtn.style.display = "none";
     dupeBtn.style.display = "block";
+    deleteBtn2.style.display = "block";
     if (removePointBtn.style.display != "none") removePointBtn.disabled = true;
     if (addPointBtn.style.display != "none") addPointBtn.disabled = true;
     if (clipcanvasfabric.getActiveObject() != null ||
         clipcanvasfabric.getActiveObject() != undefined) {
           dupeBtn.disabled = false;
-        }
-    else { dupeBtn.disabled = true; }
+          deleteBtn2.disabled = false;
+          if (clipcanvasfabric.getObjects().length < 2) { deleteBtn2.disabled = true; }
+    }
+    else {
+      dupeBtn.disabled = true;
+      deleteBtn2.disabled = true;
+    }
   }
 
   if (clipPath != undefined && square != undefined) {

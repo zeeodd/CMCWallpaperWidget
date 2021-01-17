@@ -41,7 +41,7 @@ canvas {
   font-size: 12px;
 }
 
-#deleteBtn, #cropBtn {
+#deleteBtn, #deleteBtn2, #cropBtn {
   background-color: #555555;
   font-family: monospace;
   border: none;
