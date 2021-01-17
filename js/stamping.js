@@ -486,9 +486,10 @@ function update(progress) {
     if (removePointBtn.style.display != "none") removePointBtn.disabled = true;
     if (addPointBtn.style.display != "none") addPointBtn.disabled = true;
     if (
-      clipcanvasfabric.getActiveObject() != null ||
-      clipcanvasfabric.getActiveObject() != undefined
-    ) {
+        (clipcanvasfabric.getActiveObject() != null ||
+        clipcanvasfabric.getActiveObject() != undefined) &&
+        clipcanvasfabric.getActiveObjects().length == 1
+        ) {
       dupeBtn.disabled = false;
       deleteBtn2.disabled = false;
       if (clipcanvasfabric.getObjects().length < 2) {
