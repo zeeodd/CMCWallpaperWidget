@@ -25,8 +25,48 @@ var deleteBtn2 = document.getElementById("deleteBtn2");
 var cropBtn = document.getElementById("cropBtn");
 var dupeBtn = document.getElementById("dupeBtn");
 var uploadBtn = document.getElementById("uploadBtn");
+var flipXBtn = document.getElementById("flipX");
+var flipYBtn = document.getElementById("flipY");
 var canvasfabric = new fabric.Canvas("canvas", {});
 var clipcanvasfabric = new fabric.Canvas("clipcanvas", {});
+
+document.onclick = hideMenu;
+document.oncontextmenu = rightClick;
+
+function hideMenu() {
+    document.getElementById("contextMenu").style.display = "none"
+}
+
+function rightClick(e) {
+  if (hasCropped && clipcanvasfabric.getActiveObjects().length == 1) {
+    e.preventDefault();
+
+    if (document.getElementById("contextMenu").style.display == "block")
+        hideMenu();
+    else {
+        var menu = document.getElementById("contextMenu")
+        menu.style.display = 'block';
+        menu.style.left = e.pageX + "px";
+        menu.style.top = e.pageY + "px";
+    }
+  }
+}
+
+flipXBtn.onclick = function() {
+  if (clipcanvasfabric.getActiveObject().flipX == false) {
+    clipcanvasfabric.getActiveObject().set("flipX", true);
+  } else {
+    clipcanvasfabric.getActiveObject().set("flipX", false);
+  }
+}
+
+flipYBtn.onclick = function() {
+  if (clipcanvasfabric.getActiveObject().flipY == false) {
+    clipcanvasfabric.getActiveObject().set("flipY", true);
+  } else {
+    clipcanvasfabric.getActiveObject().set("flipY", false);
+  }
+}
 
 document.getElementById('file').addEventListener("change", function (e) {
   var file = e.target.files[0];
