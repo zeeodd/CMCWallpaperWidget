@@ -3,7 +3,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  align-items: flex-start;
+  align-items: baseline;
   text-align: center;
   margin: 0px;
 }
@@ -205,6 +205,7 @@ input[type=file] {
   text-decoration: none;
   display: inline-block;
   font-size: 12px;
+  margin-bottom: 20px;
 }
 
 #modalBtn h2 {
