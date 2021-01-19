@@ -3,9 +3,9 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  align-items: baseline;
-  margin-top: 10px;
+  align-items: flex-start;
   text-align: center;
+  margin: 0px;
 }
 
 canvas {
@@ -41,11 +41,24 @@ input[type=file] {
   display: none;
 }
 
+#selection-panel {
+  background-color: #f0f0f0;
+  height: 100vh;
+  width: 300px;
+}
+
 .controls-div {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: baseline;
+}
+
+.buttons-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between  ;
+  height: 100vh;
 }
 
 .instructions-div {
@@ -165,7 +178,7 @@ input[type=file] {
   font-size: 12px;
 }
 
-#myBtn {
+#modalBtn {
   background-color: #FEB40E;
   font-family: monospace;
   border: none;
@@ -177,14 +190,34 @@ input[type=file] {
   text-decoration: none;
   display: inline-block;
   font-size: 12px;
+  margin-left: 40px;
 }
 
-#myBtn h2 {
+#restartBtn {
+  background-color: black;
+  font-family: monospace;
+  border: none;
+  color: #FEB40E;
+  padding: 10px;
+  width: 100px;
+  height: 40px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+}
+
+#modalBtn h2 {
   padding: 0px;
   margin: 0px;
 }
 
-#myBtn ol {
+#restartBtn h2 {
+  padding: 0px;
+  margin: 0px;
+}
+
+#modalBtn ol {
   list-style-position: inside;
 }
 
@@ -257,7 +290,7 @@ input[type=file] {
 /* Modal Content/Box */
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 10% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
   width: 500px; /* Could be more or less, depending on screen size */

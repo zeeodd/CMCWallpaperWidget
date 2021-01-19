@@ -27,6 +27,7 @@ var dupeBtn = document.getElementById("dupeBtn");
 var uploadBtn = document.getElementById("uploadBtn");
 var flipXBtn = document.getElementById("flipX");
 var flipYBtn = document.getElementById("flipY");
+var restartBtn = document.getElementById("restartBtn");
 var canvasfabric = new fabric.Canvas("canvas", {});
 var clipcanvasfabric = new fabric.Canvas("clipcanvas", {});
 
@@ -50,6 +51,11 @@ function rightClick(e) {
         menu.style.top = e.pageY + "px";
     }
   }
+}
+
+restartBtn.onclick = function() {
+  window.location.reload();
+  return false;
 }
 
 flipXBtn.onclick = function() {
@@ -111,273 +117,273 @@ document.getElementById('file').addEventListener("change", function (e) {
   reader.readAsDataURL(file);
 });
 
-img.onload = function() {
+// img.onload = function() {
+//
+//   ogImg = new fabric.Image(img, {
+//     top: 0,
+//     left: 0,
+//     selectable: false
+//   });
+//
+//   clipImg = new fabric.Image(img, {
+//     top: 0,
+//     left: 0,
+//     centerX: "center",
+//     centerY: "center",
+//     selectable: false
+//   });
+//
+//   canvasfabric.add(ogImg);
+//   canvasfabric.centerObject(ogImg);
+//   canvasfabric.renderAll();
+// };
 
-  ogImg = new fabric.Image(img, {
-    top: 0,
-    left: 0,
-    selectable: false
+// Add Rectangle
+addRectBtn.onclick = function() {
+  square = new fabric.Rect({
+    top: (canvasHeight/2) - (50/2),
+    left: (canvasWidth/2) - (50/2),
+    width: 50,
+    height: 50,
+    fill: "green",
+    lockRotation: true,
+    opacity: 0.5
   });
-
-  clipImg = new fabric.Image(img, {
-    top: 0,
-    left: 0,
-    centerX: "center",
-    centerY: "center",
-    selectable: false
+  square.name = "square";
+  square.setControlsVisibility({
+    mtr: false
   });
-
-  canvasfabric.add(ogImg);
-  canvasfabric.centerObject(ogImg);
+  canvasfabric.discardActiveObject().renderAll();
+  canvasfabric.add(square);
+  canvasfabric.bringToFront(square);
+  canvasfabric.setActiveObject(square);
   canvasfabric.renderAll();
 
-  // Add Rectangle
-  addRectBtn.onclick = function() {
-    square = new fabric.Rect({
-      top: (canvasHeight/2) - (50/2),
-      left: (canvasWidth/2) - (50/2),
-      width: 50,
-      height: 50,
-      fill: "green",
-      lockRotation: true,
-      opacity: 0.5
+  clipPath = new fabric.Rect({ top: (canvasHeight/2) - (50/2),
+                               left: (canvasHeight/2) - (50/2),
+                               width: 50,
+                               height: 50 });
+  clipcanvasfabric.add(clipImg);
+  clipcanvasfabric.centerObject(clipImg);
+  clipcanvasfabric.renderAll();
+  clipcanvasfabric.clipPath = clipPath;
+  clipcanvasfabric.renderAll();
+};
+
+// Add Circle
+addCircleBtn.onclick = function() {
+  circle = new fabric.Circle({
+    top: (canvasHeight/2) - (40),
+    left: (canvasWidth/2) - (40),
+    radius: 40,
+    fill: "blue",
+    lockRotation: true,
+    opacity: 0.5
+  });
+  circle.name = "circle";
+  circle.setControlsVisibility({
+    mt: false,
+    mb: false,
+    ml: false,
+    mr: false,
+    mtr: false
+  });
+  canvasfabric.discardActiveObject().renderAll();
+  canvasfabric.add(circle);
+  canvasfabric.bringToFront(circle);
+  canvasfabric.setActiveObject(circle);
+  canvasfabric.renderAll();
+
+  clipPath = new fabric.Circle({ top: (canvasHeight/2) - (40),
+                                 left: (canvasWidth/2) - (40),
+                                 radius: 40 });
+  clipcanvasfabric.add(clipImg);
+  clipcanvasfabric.centerObject(clipImg);
+  clipcanvasfabric.renderAll();
+  clipcanvasfabric.clipPath = clipPath;
+  clipcanvasfabric.renderAll();
+};
+
+// Add Polygon
+addPolygonBtn.onclick = function() {
+  var points = [
+    { x: 0, y: 0 },
+    { x: 40, y: 20 },
+    { x: 40, y: 60 },
+    { x: -40, y: 60 },
+    { x: -40, y: 20 }
+  ];
+  polygon = new fabric.Polygon(points, {
+    left: (canvasHeight/2) - 40,
+    top: (canvasHeight/2) - 30,
+    fill: "red",
+    opacity: 0.5,
+    scaleX: 1,
+    scaleY: 1,
+    objectCaching: false,
+    cornerColor: "red",
+    transparentCorners: false
+  });
+  polygon.name = "polygon";
+  canvasfabric.add(polygon);
+  canvasfabric.bringToFront(polygon);
+  canvasfabric.renderAll();
+
+  clipPath = new fabric.Polygon(points, {
+    left: 160,
+    top: 170,
+    objectCaching: false
+  });
+  clipcanvasfabric.add(clipImg);
+  clipcanvasfabric.centerObject(clipImg);
+  clipcanvasfabric.renderAll();
+  clipcanvasfabric.clipPath = clipPath;
+  clipcanvasfabric.renderAll();
+
+  Edit();
+};
+
+// Crop
+cropBtn.onclick = function() {
+  disableInputCanvas();
+  hasCropped = true;
+
+  clipImg.selectable = true;
+  disabled = true;
+  clipPath.visible = false;
+  var cropped = new Image();
+
+  if (square != undefined) {
+    cropped.src = clipcanvasfabric.toDataURL({
+      left: clipPath.left,
+      top: clipPath.top,
+      width: clipPath.width,
+      height: clipPath.height
     });
-    square.name = "square";
-    square.setControlsVisibility({
-      mtr: false
+    cropped.onload = function() {
+      clipcanvasfabric.clear();
+      clipImg = new fabric.Image(cropped);
+      clipImg.left = clipPath.left;
+      clipImg.top = clipPath.top;
+      clipImg.setCoords();
+      clipcanvasfabric.add(clipImg);
+      clipcanvasfabric.clipPath = null;
+      clipPath = null;
+      clipcanvasfabric.setActiveObject(clipImg);
+      clipcanvasfabric.centerObject(clipImg);
+      clipcanvasfabric.renderAll();
+    };
+  } else if (circle != undefined) {
+    cropped.src = clipcanvasfabric.toDataURL({
+      left: clipPath.left,
+      top: clipPath.top,
+      width: clipPath.radius * 2,
+      height: clipPath.radius * 2
     });
-    canvasfabric.discardActiveObject().renderAll();
-    canvasfabric.add(square);
-    canvasfabric.bringToFront(square);
-    canvasfabric.setActiveObject(square);
-    canvasfabric.renderAll();
-
-    clipPath = new fabric.Rect({ top: (canvasHeight/2) - (50/2),
-                                 left: (canvasHeight/2) - (50/2),
-                                 width: 50,
-                                 height: 50 });
-    clipcanvasfabric.add(clipImg);
-    clipcanvasfabric.centerObject(clipImg);
-    clipcanvasfabric.renderAll();
-    clipcanvasfabric.clipPath = clipPath;
-    clipcanvasfabric.renderAll();
-  };
-
-  // Add Circle
-  addCircleBtn.onclick = function() {
-    circle = new fabric.Circle({
-      top: (canvasHeight/2) - (40),
-      left: (canvasWidth/2) - (40),
-      radius: 40,
-      fill: "blue",
-      lockRotation: true,
-      opacity: 0.5
+    cropped.onload = function() {
+      clipcanvasfabric.clear();
+      clipImg = new fabric.Image(cropped);
+      clipImg.left = clipPath.left;
+      clipImg.top = clipPath.top;
+      clipImg.setCoords();
+      clipcanvasfabric.add(clipImg);
+      clipcanvasfabric.clipPath = null;
+      clipPath = null;
+      clipcanvasfabric.setActiveObject(clipImg);
+      clipcanvasfabric.centerObject(clipImg);
+      clipcanvasfabric.renderAll();
+    };
+  } else if (polygon != undefined) {
+    cropped.src = clipcanvasfabric.toDataURL({
+      left: clipPath.left,
+      top: clipPath.top,
+      width: clipPath.width,
+      height: clipPath.height
     });
-    circle.name = "circle";
-    circle.setControlsVisibility({
-      mt: false,
-      mb: false,
-      ml: false,
-      mr: false,
-      mtr: false
+    cropped.onload = function() {
+      clipcanvasfabric.clear();
+      clipImg = new fabric.Image(cropped);
+      clipImg.left = clipPath.left;
+      clipImg.top = clipPath.top;
+      clipImg.setCoords();
+      clipcanvasfabric.add(clipImg);
+      clipcanvasfabric.clipPath = null;
+      clipPath = null;
+      clipcanvasfabric.setActiveObject(clipImg);
+      clipcanvasfabric.centerObject(clipImg);
+      clipcanvasfabric.renderAll();
+      clipcanvasfabric.bringToFront(clipImg);
+    };
+  }
+  console.log("CROPPED!");
+};
+
+// Duplicate Button
+dupeBtn.onclick = function() {
+  var object = fabric.util.object.clone(clipcanvasfabric.getActiveObject());
+  object.set("top", object.top + object.height);
+  object.set("left", object.left + object.width);
+  clipcanvasfabric.setActiveObject(object);
+  clipcanvasfabric.add(object);
+};
+
+// Add Polygon point
+addPointBtn.onclick = function() {
+  // var cachedPoints = polygon.points;
+  var firstPoint = polygon.points[0];
+  var lastPoint = polygon.points[polygon.points.length - 1];
+  var newPoint = { x: 0, y: 0 };
+  newPoint.x = (lastPoint.x + firstPoint.x) / 2;
+  newPoint.y = (lastPoint.y + firstPoint.y) / 2;
+  polygon.points.push(newPoint);
+  Edit();
+  Edit();
+};
+
+// Remove Polygon point
+removePointBtn.onclick = function() {
+  polygon.points.pop();
+  Edit();
+  Edit();
+};
+
+// Delete
+deleteBtn.onclick = function() {
+  var selection = canvasfabric.getActiveObject();
+  if (selection.type === "activeSelection") {
+    selection.forEachObject(function(element) {
+      canvasfabric.remove(element);
     });
-    canvasfabric.discardActiveObject().renderAll();
-    canvasfabric.add(circle);
-    canvasfabric.bringToFront(circle);
-    canvasfabric.setActiveObject(circle);
-    canvasfabric.renderAll();
+  } else {
+    canvasfabric.remove(selection);
+  }
 
-    clipPath = new fabric.Circle({ top: (canvasHeight/2) - (40),
-                                   left: (canvasWidth/2) - (40),
-                                   radius: 40 });
-    clipcanvasfabric.add(clipImg);
-    clipcanvasfabric.centerObject(clipImg);
-    clipcanvasfabric.renderAll();
-    clipcanvasfabric.clipPath = clipPath;
-    clipcanvasfabric.renderAll();
-  };
+  if (selection.name == "square") {
+    square = undefined;
+  } else if (selection.name == "circle") {
+    circle = undefined;
+  } else if (selection.name == "polygon") {
+    polygon = undefined;
+  }
 
-  // Add Polygon
-  addPolygonBtn.onclick = function() {
-    var points = [
-      { x: 0, y: 0 },
-      { x: 40, y: 20 },
-      { x: 40, y: 60 },
-      { x: -40, y: 60 },
-      { x: -40, y: 20 }
-    ];
-    polygon = new fabric.Polygon(points, {
-      left: (canvasHeight/2) - 40,
-      top: (canvasHeight/2) - 30,
-      fill: "red",
-      opacity: 0.5,
-      scaleX: 1,
-      scaleY: 1,
-      objectCaching: false,
-      cornerColor: "red",
-      transparentCorners: false
+  canvasfabric.discardActiveObject();
+  clipcanvasfabric.clear();
+  canvasfabric.requestRenderAll();
+};
+
+// Delete 2
+deleteBtn2.onclick = function() {
+  var selection = clipcanvasfabric.getActiveObject();
+  if (selection.type === "activeSelection") {
+    selection.forEachObject(function(element) {
+      clipcanvasfabric.remove(element);
     });
-    polygon.name = "polygon";
-    canvasfabric.add(polygon);
-    canvasfabric.bringToFront(polygon);
-    canvasfabric.renderAll();
+  } else {
+    clipcanvasfabric.remove(selection);
+  }
 
-    clipPath = new fabric.Polygon(points, {
-      left: 160,
-      top: 170,
-      objectCaching: false
-    });
-    clipcanvasfabric.add(clipImg);
-    clipcanvasfabric.centerObject(clipImg);
-    clipcanvasfabric.renderAll();
-    clipcanvasfabric.clipPath = clipPath;
-    clipcanvasfabric.renderAll();
-
-    Edit();
-  };
-
-  // Crop
-  cropBtn.onclick = function() {
-    disableInputCanvas();
-    hasCropped = true;
-
-    clipImg.selectable = true;
-    disabled = true;
-    clipPath.visible = false;
-    var cropped = new Image();
-
-    if (square != undefined) {
-      cropped.src = clipcanvasfabric.toDataURL({
-        left: clipPath.left,
-        top: clipPath.top,
-        width: clipPath.width,
-        height: clipPath.height
-      });
-      cropped.onload = function() {
-        clipcanvasfabric.clear();
-        clipImg = new fabric.Image(cropped);
-        clipImg.left = clipPath.left;
-        clipImg.top = clipPath.top;
-        clipImg.setCoords();
-        clipcanvasfabric.add(clipImg);
-        clipcanvasfabric.clipPath = null;
-        clipPath = null;
-        clipcanvasfabric.setActiveObject(clipImg);
-        clipcanvasfabric.centerObject(clipImg);
-        clipcanvasfabric.renderAll();
-      };
-    } else if (circle != undefined) {
-      cropped.src = clipcanvasfabric.toDataURL({
-        left: clipPath.left,
-        top: clipPath.top,
-        width: clipPath.radius * 2,
-        height: clipPath.radius * 2
-      });
-      cropped.onload = function() {
-        clipcanvasfabric.clear();
-        clipImg = new fabric.Image(cropped);
-        clipImg.left = clipPath.left;
-        clipImg.top = clipPath.top;
-        clipImg.setCoords();
-        clipcanvasfabric.add(clipImg);
-        clipcanvasfabric.clipPath = null;
-        clipPath = null;
-        clipcanvasfabric.setActiveObject(clipImg);
-        clipcanvasfabric.centerObject(clipImg);
-        clipcanvasfabric.renderAll();
-      };
-    } else if (polygon != undefined) {
-      cropped.src = clipcanvasfabric.toDataURL({
-        left: clipPath.left,
-        top: clipPath.top,
-        width: clipPath.width,
-        height: clipPath.height
-      });
-      cropped.onload = function() {
-        clipcanvasfabric.clear();
-        clipImg = new fabric.Image(cropped);
-        clipImg.left = clipPath.left;
-        clipImg.top = clipPath.top;
-        clipImg.setCoords();
-        clipcanvasfabric.add(clipImg);
-        clipcanvasfabric.clipPath = null;
-        clipPath = null;
-        clipcanvasfabric.setActiveObject(clipImg);
-        clipcanvasfabric.centerObject(clipImg);
-        clipcanvasfabric.renderAll();
-        clipcanvasfabric.bringToFront(clipImg);
-      };
-    }
-    console.log("CROPPED!");
-  };
-
-  // Duplicate Button
-  dupeBtn.onclick = function() {
-    var object = fabric.util.object.clone(clipcanvasfabric.getActiveObject());
-    object.set("top", object.top + object.height);
-    object.set("left", object.left + object.width);
-    clipcanvasfabric.setActiveObject(object);
-    clipcanvasfabric.add(object);
-  };
-
-  // Add Polygon point
-  addPointBtn.onclick = function() {
-    // var cachedPoints = polygon.points;
-    var firstPoint = polygon.points[0];
-    var lastPoint = polygon.points[polygon.points.length - 1];
-    var newPoint = { x: 0, y: 0 };
-    newPoint.x = (lastPoint.x + firstPoint.x) / 2;
-    newPoint.y = (lastPoint.y + firstPoint.y) / 2;
-    polygon.points.push(newPoint);
-    Edit();
-    Edit();
-  };
-
-  // Remove Polygon point
-  removePointBtn.onclick = function() {
-    polygon.points.pop();
-    Edit();
-    Edit();
-  };
-
-  // Delete
-  deleteBtn.onclick = function() {
-    var selection = canvasfabric.getActiveObject();
-    if (selection.type === "activeSelection") {
-      selection.forEachObject(function(element) {
-        canvasfabric.remove(element);
-      });
-    } else {
-      canvasfabric.remove(selection);
-    }
-
-    if (selection.name == "square") {
-      square = undefined;
-    } else if (selection.name == "circle") {
-      circle = undefined;
-    } else if (selection.name == "polygon") {
-      polygon = undefined;
-    }
-
-    canvasfabric.discardActiveObject();
-    clipcanvasfabric.clear();
-    canvasfabric.requestRenderAll();
-  };
-
-  // Delete 2
-  deleteBtn2.onclick = function() {
-    var selection = clipcanvasfabric.getActiveObject();
-    if (selection.type === "activeSelection") {
-      selection.forEachObject(function(element) {
-        clipcanvasfabric.remove(element);
-      });
-    } else {
-      clipcanvasfabric.remove(selection);
-    }
-
-    clipcanvasfabric.discardActiveObject();
-    clipcanvasfabric.requestRenderAll();
-  };
+  clipcanvasfabric.discardActiveObject();
+  clipcanvasfabric.requestRenderAll();
 };
 
 // Disable Canvas on crop
