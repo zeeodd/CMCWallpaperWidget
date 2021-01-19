@@ -505,7 +505,9 @@ function update(progress) {
       addRectBtn.disabled = true;
       addPolygonBtn.disabled = true;
       deleteBtn.disabled = false;
+      cropBtn.disabled = false;
     } else {
+      cropBtn.disabled = true;
       addCircleBtn.disabled = false;
       addRectBtn.disabled = false;
       addPolygonBtn.disabled = false;

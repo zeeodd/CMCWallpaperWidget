@@ -48,6 +48,25 @@ input[type=file] {
   align-items: baseline;
 }
 
+.instructions-div {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.instructions-div-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.line-p {
+  text-align: left;
+}
+
 #dupeBtn {
   background-color: #8510d8;
   font-family: monospace;
@@ -160,6 +179,15 @@ input[type=file] {
   font-size: 12px;
 }
 
+#myBtn h2 {
+  padding: 0px;
+  margin: 0px;
+}
+
+#myBtn ol {
+  list-style-position: inside;
+}
+
 #file {
   margin-top: 10px;
 }
@@ -232,7 +260,7 @@ input[type=file] {
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 500px; /* Could be more or less, depending on screen size */
 }
 
 /* The Close Button */
