@@ -111,8 +111,7 @@ document.getElementById('file').addEventListener("change", function (e) {
                            selectable: false }).scale(scale);
     });
 
-    console.log(ogImg);
-    console.log(clipImg);
+    imageAdded = true;
 
   };
   reader.readAsDataURL(file);
@@ -559,7 +558,10 @@ function update(progress) {
       addPointBtn.style.display = "none";
     }
   } else {
-    uploadBtn.style.display = "none";
+    uploadBtn.style.backgroundColor = "#C1C1C1";
+    uploadBtn.style.color = "#6F6F6F";
+    uploadBtn.classList.add('custom-file-upload-hover');
+    document.getElementById("file").disabled = true;
     addCircleBtn.disabled = true;
     addRectBtn.disabled = true;
     addPolygonBtn.disabled = true;
