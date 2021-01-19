@@ -6,6 +6,7 @@ body {
   align-items: baseline;
   text-align: center;
   margin: 0px;
+  overflow: hidden;
 }
 
 canvas {
@@ -25,12 +26,13 @@ input[type=file] {
   font-family: monospace;
   border: none;
   color: white;
-  width: 100px;
+  width: 120px;
   height: 40px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 12px;
+  margin-top: 30px;
 }
 
 #addRectBtn {
@@ -45,6 +47,7 @@ input[type=file] {
   background-color: #f0f0f0;
   height: 100vh;
   width: 300px;
+  overflow-y: none;
 }
 
 .controls-div {
@@ -80,6 +83,31 @@ input[type=file] {
   text-align: left;
 }
 
+.gallery-img {
+  width: 90%;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.gallery-img:hover {
+  cursor: pointer;
+}
+
+#div1 {
+  height: 610px;
+}
+
+#div2 {
+  height: inherit;
+  overflow: auto;
+  /* border: 1px solid red; */
+}
+
+#div3 {
+  height: auto;
+  /* border: 5px solid yellow; */
+}
+
 #dupeBtn {
   background-color: #8510d8;
   font-family: monospace;
@@ -92,9 +120,10 @@ input[type=file] {
   text-decoration: none;
   display: inline-block;
   font-size: 12px;
+  margin-top: 15px;
 }
 
-#deleteBtn, #deleteBtn2, #cropBtn {
+#deleteBtn, #deleteBtn2 {
   background-color: #555555;
   font-family: monospace;
   border: none;
@@ -106,6 +135,21 @@ input[type=file] {
   text-decoration: none;
   display: inline-block;
   font-size: 12px;
+}
+
+#cropBtn {
+  background-color: #555555;
+  font-family: monospace;
+  border: none;
+  color: white;
+  padding: 10px;
+  width: 100px;
+  height: 40px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin-top: 15px;
 }
 
 #addRectBtn {

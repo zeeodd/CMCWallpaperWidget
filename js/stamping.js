@@ -12,6 +12,7 @@ var polygon;
 var ogImg;
 var clipImg;
 var _clipboard;
+var imageAdded = false;
 
 var hasCropped = false;
 
@@ -265,6 +266,16 @@ cropBtn.onclick = function() {
       clipImg = new fabric.Image(cropped);
       clipImg.left = clipPath.left;
       clipImg.top = clipPath.top;
+      clipImg.setControlsVisibility({
+        tl:false,
+        mt:false,
+        tr:false,
+        ml:false,
+        mr:false,
+        bl:false,
+        mb:false,
+        br:false
+      });
       clipImg.setCoords();
       clipcanvasfabric.add(clipImg);
       clipcanvasfabric.clipPath = null;
@@ -285,6 +296,16 @@ cropBtn.onclick = function() {
       clipImg = new fabric.Image(cropped);
       clipImg.left = clipPath.left;
       clipImg.top = clipPath.top;
+      clipImg.setControlsVisibility({
+        tl:false,
+        mt:false,
+        tr:false,
+        ml:false,
+        mr:false,
+        bl:false,
+        mb:false,
+        br:false
+      });
       clipImg.setCoords();
       clipcanvasfabric.add(clipImg);
       clipcanvasfabric.clipPath = null;
@@ -305,6 +326,16 @@ cropBtn.onclick = function() {
       clipImg = new fabric.Image(cropped);
       clipImg.left = clipPath.left;
       clipImg.top = clipPath.top;
+      clipImg.setControlsVisibility({
+        tl:false,
+        mt:false,
+        tr:false,
+        ml:false,
+        mr:false,
+        bl:false,
+        mb:false,
+        br:false
+      });
       clipImg.setCoords();
       clipcanvasfabric.add(clipImg);
       clipcanvasfabric.clipPath = null;
@@ -507,16 +538,22 @@ function update(progress) {
     }
 
     if (square != undefined || circle != undefined || polygon != undefined) {
+      deleteBtn.disabled = false;
+      cropBtn.disabled = false;
       addCircleBtn.disabled = true;
       addRectBtn.disabled = true;
       addPolygonBtn.disabled = true;
-      deleteBtn.disabled = false;
-      cropBtn.disabled = false;
     } else {
+      if (!imageAdded) {
+        addCircleBtn.disabled = true;
+        addRectBtn.disabled = true;
+        addPolygonBtn.disabled = true;
+      } else {
+        addCircleBtn.disabled = false;
+        addRectBtn.disabled = false;
+        addPolygonBtn.disabled = false;
+      }
       cropBtn.disabled = true;
-      addCircleBtn.disabled = false;
-      addRectBtn.disabled = false;
-      addPolygonBtn.disabled = false;
       deleteBtn.disabled = true;
       removePointBtn.style.display = "none";
       addPointBtn.style.display = "none";
