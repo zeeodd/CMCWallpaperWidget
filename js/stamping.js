@@ -146,7 +146,7 @@ addRectBtn.onclick = function() {
     left: (canvasWidth/2) - (50/2),
     width: 50,
     height: 50,
-    fill: "green",
+    fill: "white",
     lockRotation: true,
     opacity: 0.5
   });
@@ -177,7 +177,7 @@ addCircleBtn.onclick = function() {
     top: (canvasHeight/2) - (40),
     left: (canvasWidth/2) - (40),
     radius: 40,
-    fill: "blue",
+    fill: "white",
     lockRotation: true,
     opacity: 0.5
   });
@@ -217,12 +217,12 @@ addPolygonBtn.onclick = function() {
   polygon = new fabric.Polygon(points, {
     left: (canvasHeight/2) - 40,
     top: (canvasHeight/2) - 30,
-    fill: "red",
+    fill: "white",
     opacity: 0.5,
     scaleX: 1,
     scaleY: 1,
     objectCaching: false,
-    cornerColor: "red",
+    cornerColor: "white",
     transparentCorners: false
   });
   polygon.name = "polygon";
