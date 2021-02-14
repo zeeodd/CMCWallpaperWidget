@@ -102,7 +102,7 @@ document.getElementById('file').addEventListener("change", function (e) {
       var scale = 1.0;
       if (img.height > (canvasHeight-25) || img.width > (canvasWidth-25)) {
         scale = (canvasHeight-25) / Math.max(img.height, img.width)
-        cosole.log('here');
+        console.log('here');
       }
       clipImg = img.set({ left: 0,
                            top: 0,
