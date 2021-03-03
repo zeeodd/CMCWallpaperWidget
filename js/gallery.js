@@ -27,39 +27,69 @@ hardBtn.addEventListener("click", function(e) {
 });
 
 function easyToggle() {
-  img1.src = "img/image1.png";
-  img2.src = "img/image1.png";
-  img3.src = "img/image1.png";
-  img4.src = "img/image1.png";
-  img5.src = "img/image1.png";
-  img6.src = "img/image1.png";
-  img7.src = "img/image1.png";
-  img8.src = "img/image1.png";
-  img9.src = "img/image1.png";
+  img1.src = "img/easy/easy0.png";
+  img2.src = "img/easy/easy1.png";
+  img3.src = "img/easy/easy2.png";
+  img4.src = "img/easy/easy3.png";
+  img5.src = "img/easy/easy4.jpg";
+  img6.src = "img/easy/easy5.jpg";
+  img7.src = "img/easy/easy6.jpg";
+  img8.src = "";
+  img9.src = "";
+
+  img1.style.display = "inline-block";
+  img2.style.display = "inline-block";
+  img3.style.display = "inline-block";
+  img4.style.display = "inline-block";
+  img5.style.display = "inline-block";
+  img6.style.display = "inline-block";
+  img7.style.display = "inline-block";
+  img8.style.display = "none";
+  img9.style.display = "none";
 }
 
 function mediumToggle() {
-  img1.src = "img/image2.png";
-  img2.src = "img/image2.png";
-  img3.src = "img/image2.png";
-  img4.src = "img/image2.png";
-  img5.src = "img/image2.png";
-  img6.src = "img/image2.png";
-  img7.src = "img/image2.png";
-  img8.src = "img/image2.png";
-  img9.src = "img/image2.png";
+  img1.src = "img/medium/medium0.png";
+  img2.src = "img/medium/medium1.png";
+  img3.src = "img/medium/medium2.png";
+  img4.src = "img/medium/medium3.png";
+  img5.src = "";
+  img6.src = "";
+  img7.src = "";
+  img8.src = "";
+  img9.src = "";
+
+  img1.style.display = "inline-block";
+  img2.style.display = "inline-block";
+  img3.style.display = "inline-block";
+  img4.style.display = "inline-block";
+  img5.style.display = "none";
+  img6.style.display = "none";
+  img7.style.display = "none";
+  img8.style.display = "none";
+  img9.style.display = "none";
 }
 
 function hardToggle() {
-  img1.src = "img/image3.png";
-  img2.src = "img/image3.png";
-  img3.src = "img/image3.png";
-  img4.src = "img/image3.png";
+  img1.src = "img/hard/hard0.png";
+  img2.src = "img/hard/hard1.png";
+  img3.src = "img/hard/hard2.png";
+  img4.src = "img/hard/hard3.png";
   img5.src = "img/image3.png";
   img6.src = "img/image3.png";
   img7.src = "img/image3.png";
   img8.src = "img/image3.png";
   img9.src = "img/image3.png";
+
+  img1.style.display = "inline-block";
+  img2.style.display = "inline-block";
+  img3.style.display = "inline-block";
+  img4.style.display = "inline-block";
+  img5.style.display = "none";
+  img6.style.display = "none";
+  img7.style.display = "none";
+  img8.style.display = "none";
+  img9.style.display = "none";
 }
 
 window.addEventListener('load', (event) => {
